@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Require authentication for all reads/writes
+    match /{path=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // users collection: each user can manage their own profile
+    match /users/{userId} {
+      allow create: if request.auth.uid == userId;
+      allow read, update: if request.auth.uid == userId;
+    }
+
+    // promotions: only owners can create/edit/delete
+    match /promotions/{promoId} {
+      allow read: if true;
+      allow create, update, delete:
+        if get(/databases/$(database)/documents/users/$(request.auth.uid))
+          .data.role == "owner";
+    }
+
+    // stars subcollection: each customer writes only to their own stars
+    match /users/{userId}/stars/{starId} {
+      allow create: if request.auth.uid == userId;
+      allow read:   if request.auth.uid == userId;
+    }
+
+    // rewards subcollection: customers can read/update only their own rewards
+    match /users/{userId}/rewards/{rewardId} {
+      allow read, update: if request.auth.uid == userId;
+    }
+  }
+}
