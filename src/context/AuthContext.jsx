@@ -30,10 +30,13 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // Signup helper: also write role into Firestore
-  const signup = async (email, password, roleFlag) => {
+  // Signup helper: also write role and metadata into Firestore
+  const signup = async (email, password, roleFlag, metadata = {}) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "users", cred.user.uid), { role: roleFlag });
+    await setDoc(doc(db, "users", cred.user.uid), {
+      role: roleFlag,
+      ...metadata 
+    });
     return cred.user;
   };
 

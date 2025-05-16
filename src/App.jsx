@@ -8,6 +8,7 @@ import Login              from "./pages/Login";
 import Signup             from "./pages/Signup";
 import OwnerDashboard     from "./pages/OwnerDashboard";
 import CustomerDashboard  from "./pages/CustomerDashboard";
+import CreatePromotion from "./pages/CreatePromotion";
 
 export default function App() {
   return (
@@ -21,6 +22,10 @@ export default function App() {
         {/* Owner-only area */}
         <Route element={<ProtectedRoute requiredRole="owner" />}>
           <Route path="/owner" element={<OwnerDashboard />} />
+        </Route>
+
+         <Route element={<ProtectedRoute requiredRole="owner" />}>
+          <Route path="/create-promotion" element={<CreatePromotion />} />
         </Route>
 
         {/* Customer-only area */}
